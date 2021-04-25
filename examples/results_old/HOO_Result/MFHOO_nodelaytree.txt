@@ -1,0 +1,137 @@
+Running Experiment 1: 
+('total budget:', 5.0)
+Auto Init: 
+C: 0.006103201357804554
+nu: 0.006103201357804554
+Budget Remaining: 4.25389414215
+Number of MFHOO Instances: 3
+Budget per MFHOO Instance:0.41796471405
+Running SOO number: 1 rho: 0.95 nu: 0.006103201357804554
+[0.11474609 0.55517578 0.85253906]
+Done!
+Running SOO number: 2 rho: 0.925945462757 nu: 0.006103201357804554
+[0.11474609 0.55517578 0.85253906]
+Done!
+Updating C
+C: 0.008544481900926375
+nu_max: 0.008544481900926375
+Running SOO number: 3 rho: 0.857375 nu: 0.008544481900926375
+[0.11474609 0.55517578 0.85253906]
+Done!
+Updating C
+C: 0.011962274661296924
+nu_max: 0.011962274661296924
+('total time:', 160.4894289970398)
+4.25410938263 : [3.8627719751789344, 3.8627719751789344, 3.8627719751789344]
+Running Experiment2: 
+('total budget:', 5.0)
+Auto Init: 
+C: 0.006103201357804554
+nu: 0.006103201357804554
+Budget Remaining: 4.25385003471
+Number of MFHOO Instances: 3
+Budget per MFHOO Instance:0.417950011571
+Running SOO number: 1 rho: 0.95 nu: 0.006103201357804554
+[0.11474609 0.55517578 0.85253906]
+Done!
+Running SOO number: 2 rho: 0.925945462757 nu: 0.006103201357804554
+[0.11474609 0.55517578 0.85253906]
+Done!
+Updating C
+C: 0.008544481900926375
+nu_max: 0.008544481900926375
+Running SOO number: 3 rho: 0.857375 nu: 0.008544481900926375
+[0.11474609 0.55517578 0.85253906]
+Done!
+Updating C
+C: 0.011962274661296924
+nu_max: 0.011962274661296924
+('total time:', 157.76209807395935)
+4.25405836105 : [3.8627719751789344, 3.8627719751789344, 3.8627719751789344]
+Running Experiment3: 
+('total budget:', 5.0)
+Auto Init: 
+C: 0.006103201357804554
+nu: 0.006103201357804554
+Budget Remaining: 4.25385718727
+Number of MFHOO Instances: 3
+Budget per MFHOO Instance:0.417952395757
+Running SOO number: 1 rho: 0.95 nu: 0.006103201357804554
+[0.11474609 0.55517578 0.85253906]
+Done!
+Running SOO number: 2 rho: 0.925945462757 nu: 0.006103201357804554
+[0.11474609 0.55517578 0.85253906]
+Done!
+Updating C
+C: 0.008544481900926375
+nu_max: 0.008544481900926375
+Running SOO number: 3 rho: 0.857375 nu: 0.008544481900926375
+[0.11474609 0.55517578 0.85253906]
+Done!
+Updating C
+C: 0.011962274661296924
+nu_max: 0.011962274661296924
+('total time:', 157.6202380657196)
+4.25405693054 : [3.8627719751789344, 3.8627719751789344, 3.8627719751789344]
+Running Experiment4: 
+('total budget:', 5.0)
+Auto Init: 
+C: 0.006103201357804554
+nu: 0.006103201357804554
+Budget Remaining: 4.25385003471
+Number of MFHOO Instances: 3
+Budget per MFHOO Instance:0.417950011571
+Running SOO number: 1 rho: 0.95 nu: 0.006103201357804554
+[0.11474609 0.55517578 0.85253906]
+Done!
+Running SOO number: 2 rho: 0.925945462757 nu: 0.006103201357804554
+[0.11474609 0.55517578 0.85253906]
+Done!
+Updating C
+C: 0.008544481900926375
+nu_max: 0.008544481900926375
+Running SOO number: 3 rho: 0.857375 nu: 0.008544481900926375
+[0.11474609 0.55517578 0.85253906]
+Done!
+Updating C
+C: 0.011962274661296924
+nu_max: 0.011962274661296924
+('total time:', 178.3406479358673)
+4.25406956673 : [3.8627719751789344, 3.8627719751789344, 3.8627719751789344]
+Running Experiment5: 
+('total budget:', 5.0)
+Auto Init: 
+C: 0.006103201357804554
+nu: 0.006103201357804554
+Budget Remaining: 4.25384502792
+Number of MFHOO Instances: 3
+Budget per MFHOO Instance:0.417948342641
+Running SOO number: 1 rho: 0.95 nu: 0.006103201357804554
+[0.11474609 0.55517578 0.85253906]
+Done!
+Running SOO number: 2 rho: 0.925945462757 nu: 0.006103201357804554
+[0.11474609 0.55566406 0.85253906]
+Done!
+Updating C
+C: 0.008544481900926375
+nu_max: 0.008544481900926375
+Running SOO number: 3 rho: 0.857375 nu: 0.008544481900926375
+[0.11474609 0.55517578 0.85253906]
+Done!
+Updating C
+C: 0.011962274661296924
+nu_max: 0.011962274661296924
+('total time:', 146.72677302360535)
+4.25418353081 : [3.8627719751789344, 3.862779757718873, 3.8627719751789344]
+Traceback (most recent call last):
+  File "experiment_synth_MFHOO.py", line 104, in <module>
+    df = pd.DataFrame(dfdic)
+  File "/Users/junxiong/Library/Python/2.7/lib/python/site-packages/pandas/core/frame.py", line 392, in __init__
+    mgr = init_dict(data, index, columns, dtype=dtype)
+  File "/Users/junxiong/Library/Python/2.7/lib/python/site-packages/pandas/core/internals/construction.py", line 212, in init_dict
+    return arrays_to_mgr(arrays, data_names, index, columns, dtype=dtype)
+  File "/Users/junxiong/Library/Python/2.7/lib/python/site-packages/pandas/core/internals/construction.py", line 51, in arrays_to_mgr
+    index = extract_index(arrays)
+  File "/Users/junxiong/Library/Python/2.7/lib/python/site-packages/pandas/core/internals/construction.py", line 317, in extract_index
+    raise ValueError('arrays must all be same length')
+ValueError: arrays must all be same length

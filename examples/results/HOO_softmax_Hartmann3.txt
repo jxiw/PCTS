@@ -1,0 +1,40 @@
+/usr/bin/python2.7 /Users/junxiong/Documents/HOO/MFTreeSearchCV-master/examples/experiment_synth_MFHOO.py
+Running Experiment 1: 
+('total budget:', 5.0)
+Auto Init: 
+C: 0.006103201357804554
+nu: 0.006103201357804554
+Budget Remaining: 4.25390391731
+Number of MFHOO Instances: 3
+Budget per MFHOO Instance:0.417967972438
+Running SOO number: 1 rho: 0.95 nu: 0.006103201357804554
+[0.109375 0.546875 0.84375 ]
+iterations:3512
+HOO number of nodes:7025
+HOO height:19
+duration:60
+Done!
+Running SOO number: 2 rho: 0.925945462757 nu: 0.006103201357804554
+[0.0859375 0.546875  0.859375 ]
+iterations:3791
+HOO number of nodes:7583
+HOO height:19
+duration:60
+Done!
+Updating C
+C: 0.008544481900926375
+nu_max: 0.008544481900926375
+Running SOO number: 3 rho: 0.857375 nu: 0.008544481900926375
+[0.1171875 0.546875  0.859375 ]
+iterations:3890
+HOO number of nodes:7781
+HOO height:19
+duration:60
+Done!
+Updating C
+C: 0.011962274661296924
+nu_max: 0.011962274661296924
+('total time:', 180.1186079978943)
+4.12807059288 : [3.8531184097208295, 3.854746994505981, 3.8551603215718857]
+
+Process finished with exit code 0

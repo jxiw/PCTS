@@ -1,0 +1,170 @@
+Running Experiment 1:
+('total budget:', 5.0)
+Auto Init:
+C: 0.006103201357804554
+nu: 0.006103201357804554
+Budget Remaining: 4.25388293648
+Number of MFHOO Instances: 3
+Budget per MFHOO Instance:0.417960978826
+Running SOO number: 1 rho: 0.95 nu: 0.006103201357804554
+[0.078125 0.546875 0.859375]
+iterations:3567
+HOO number of nodes:86966
+HOO height:19
+Done!
+Running SOO number: 2 rho: 0.925945462757 nu: 0.006103201357804554
+[0.1171875 0.546875  0.859375 ]
+iterations:3676
+HOO number of nodes:89694
+HOO height:19
+Done!
+Updating C
+C: 0.008544481900926375
+nu_max: 0.008544481900926375
+Running SOO number: 3 rho: 0.857375 nu: 0.008544481900926375
+[0.1328125 0.546875  0.859375 ]
+iterations:3536
+HOO number of nodes:85824
+HOO height:19
+Done!
+Updating C
+C: 0.011962274661296924
+nu_max: 0.011962274661296924
+('total time:', 186.4250190258026)
+4.25407099724 : [3.854470306588529, 3.8551603215718857, 3.8549506393002537]
+Running Experiment2:
+('total budget:', 5.0)
+Auto Init:
+C: 0.006103201357804554
+nu: 0.006103201357804554
+Budget Remaining: 4.25384312057
+Number of MFHOO Instances: 3
+Budget per MFHOO Instance:0.417947706858
+Running SOO number: 1 rho: 0.95 nu: 0.006103201357804554
+[0.109375 0.546875 0.859375]
+iterations:3513
+HOO number of nodes:84968
+HOO height:18
+Done!
+Running SOO number: 2 rho: 0.925945462757 nu: 0.006103201357804554
+[0.140625 0.546875 0.859375]
+iterations:2643
+HOO number of nodes:62316
+HOO height:19
+Done!
+Updating C
+C: 0.008544481900926375
+nu_max: 0.008544481900926375
+Running SOO number: 3 rho: 0.857375 nu: 0.008544481900926375
+[0.1171875 0.546875  0.859375 ]
+iterations:3647
+HOO number of nodes:88574
+HOO height:19
+Done!
+Updating C
+C: 0.011962274661296924
+nu_max: 0.011962274661296924
+('total time:', 159.25407791137695)
+4.25423717499 : [3.855161086076884, 3.8547418302495533, 3.8551603215718857]
+Running Experiment3:
+('total budget:', 5.0)
+Auto Init:
+C: 0.006103201357804554
+nu: 0.006103201357804554
+Budget Remaining: 4.25385384941
+Number of MFHOO Instances: 3
+Budget per MFHOO Instance:0.417951283137
+Running SOO number: 1 rho: 0.95 nu: 0.006103201357804554
+[0.078125 0.546875 0.859375]
+iterations:3483
+HOO number of nodes:84558
+HOO height:18
+Done!
+Running SOO number: 2 rho: 0.925945462757 nu: 0.006103201357804554
+[0.1328125 0.546875  0.859375 ]
+iterations:3182
+HOO number of nodes:76698
+HOO height:18
+Done!
+Updating C
+C: 0.008544481900926375
+nu_max: 0.008544481900926375
+Running SOO number: 3 rho: 0.857375 nu: 0.008544481900926375
+[0.1015625 0.5703125 0.8515625]
+iterations:3838
+HOO number of nodes:94192
+HOO height:19
+Done!
+Updating C
+C: 0.011962274661296924
+nu_max: 0.011962274661296924
+('total time:', 186.98906111717224)
+4.25404262543 : [3.854470306588529, 3.8549506393002537, 3.855024384754546]
+Running Experiment4:
+('total budget:', 5.0)
+Auto Init:
+C: 0.006103201357804554
+nu: 0.006103201357804554
+Budget Remaining: 4.25374989891
+Number of MFHOO Instances: 3
+Budget per MFHOO Instance:0.41791663297
+Running SOO number: 1 rho: 0.95 nu: 0.006103201357804554
+[0.109375 0.546875 0.859375]
+iterations:3459
+HOO number of nodes:84396
+HOO height:19
+Done!
+Running SOO number: 2 rho: 0.925945462757 nu: 0.006103201357804554
+[0.109375 0.546875 0.859375]
+iterations:3420
+HOO number of nodes:82298
+HOO height:19
+Done!
+Updating C
+C: 0.008544481900926375
+nu_max: 0.008544481900926375
+Running SOO number: 3 rho: 0.857375 nu: 0.008544481900926375
+[0.1171875 0.546875  0.859375 ]
+iterations:3753
+HOO number of nodes:91906
+HOO height:19
+Done!
+Updating C
+C: 0.011962274661296924
+nu_max: 0.011962274661296924
+('total time:', 188.43063497543335)
+4.25395798683 : [3.855161086076884, 3.855161086076884, 3.8551603215718857]
+Running Experiment5:
+('total budget:', 5.0)
+Auto Init:
+C: 0.006103201357804554
+nu: 0.006103201357804554
+Budget Remaining: 4.25383716011
+Number of MFHOO Instances: 3
+Budget per MFHOO Instance:0.417945720037
+Running SOO number: 1 rho: 0.95 nu: 0.006103201357804554
+[0.109375 0.546875 0.859375]
+iterations:3375
+HOO number of nodes:81406
+HOO height:18
+Done!
+Running SOO number: 2 rho: 0.925945462757 nu: 0.006103201357804554
+[0.109375 0.546875 0.859375]
+iterations:3605
+HOO number of nodes:87564
+HOO height:19
+Done!
+Updating C
+C: 0.008544481900926375
+nu_max: 0.008544481900926375
+Running SOO number: 3 rho: 0.857375 nu: 0.008544481900926375
+[0.109375 0.546875 0.859375]
+iterations:3419
+HOO number of nodes:82680
+HOO height:19
+Done!
+Updating C
+C: 0.011962274661296924
+nu_max: 0.011962274661296924
+('total time:', 182.87009692192078)
+4.25395298004 : [3.855161086076884, 3.855161086076884, 3.855161086076884]
