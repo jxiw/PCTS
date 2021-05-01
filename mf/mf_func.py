@@ -41,6 +41,8 @@ class MFFunction(object):
   def eval_at_fidel_single_point(self, Z, X):
     """ Evaluates X at the given Z at a single point. """
     if not self.vectorised:
+      # print("self.fidel_dim", self.fidel_dim)
+      # print("self.domain_dim", self.domain_dim)
       return float(self.mf_func(Z, X))
     else:
       Z = np.array(Z).reshape((1, self.fidel_dim))

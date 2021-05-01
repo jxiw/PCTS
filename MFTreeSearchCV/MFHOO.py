@@ -17,6 +17,7 @@ import numpy as np
 import random
 import sys
 import time
+from waiting import wait, TimeoutExpired
 from concurrent.futures import ThreadPoolExecutor
 
 nu_mult = 1.0  # multiplier to the nu parameter
@@ -51,6 +52,12 @@ class MF_node(object):
         self.dimension = dimension
         self.num = num
         self.t_bound = upp_bound
+        # for UCB-V policy
+        self.bound = 0.1
+        self.const = 0.1
+        self.second_moment_value = value**2
+        self.policy = "UCBV"
+        self.variance = 0
 
         self.left = None
         self.right = None
@@ -194,6 +201,10 @@ class MF_tree(object):
             parent = node.parent
             # m_value is the mean reward
             parent.m_value = (parent.num * parent.m_value + val) / (1.0 + parent.num)
+            # for UCB-V policy
+            # update the second moment
+            parent.second_moment_value = (parent.num * parent.second_moment_value + val**2) / (1.0 + parent.num)
+            parent.variance = parent.second_moment_value - parent.m_value**2
             parent.num = parent.num + 1.0
             # get the up bound which also consider the exploration
             # why we ignore the exploration term here.
@@ -212,7 +223,12 @@ class MF_tree(object):
         self.update_tbounds(root.right, t)
         # update the bound of t
         # add the exploration term
-        root.t_bound = root.upp_bound + np.sqrt(2 * (self.sigma ** 2) * np.log(t) / root.num)
+        if root.policy == 'UCB1':
+            root.t_bound = root.upp_bound + np.sqrt(2 * (self.sigma ** 2) * np.log(t) / root.num)
+        elif root.policy == 'UCBV':
+            root.t_bound = root.upp_bound + np.sqrt(root.const * root.variance * np.log(t) / root.num) + (root.bound * np.log(t) / root.num)
+        else:
+            raise Exception("policy is not found")
         maxi = None
         if root.left:
             maxi = root.left.t_bound
@@ -478,15 +494,13 @@ class MFHOO(object):
 
         return children, cost
 
-    # def take_StoSOO_step(self):
-
     # def take_parallel_delay_HOO_step(self):
     #     # run HOO at one iteration
     #     # iterate from the root node
     #     current = self.Tree.get_next_node(self.Tree.root)
     #     # split the children from the current node
     #     # multi thread apps start here
-    #     # wait(lambda: len(self.under_evaluate_ts) == 0 or self.under_evaluate_ts[0] + self.max_delay < self.ts)
+    #     wait(lambda: len(self.under_evaluate_ts) == 0 or self.under_evaluate_ts[0] + self.max_delay < self.ts)
     #
     #     self.node_under_evaluation.append(current)
     #     self.under_evaluate_ts.append(self.ts)
@@ -530,6 +544,12 @@ class MFHOO(object):
 
         future.add_done_callback(partial(callback_fun, root=self.Tree.root))
 
+    def take_Stoo_step(self):
+        current = self.Tree.get_next_node(self.Tree.root)
+        children, cost = self.split_children(current, self.rho, self.nu, 1)
+        self.t = self.t + 2
+        self.cost = self.cost + cost
+
     def take_HOO_step(self):
         current = self.Tree.get_next_node(self.Tree.root)
         children, cost = self.split_children(current, self.rho, self.nu, 1)
@@ -570,7 +590,7 @@ class MFHOO(object):
         current_time = time.time()
         # while self.cost <= self.budget:
         while current_time - start_time < duration:
-            self.take_parallel_delay_HOO_step()
+            self.take_HOO_step()
             iter_num += 1
             # print("cost:%f, budget%f"%(self.cost, self.budget))
             current_time = time.time()
