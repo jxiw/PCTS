@@ -1,6 +1,6 @@
 """
   Unit tests for gp_instances.py
-  -- kandasamy@cs.cmu.edu
+
 """
 
 # pylint: disable=import-error

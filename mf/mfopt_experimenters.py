@@ -1,6 +1,6 @@
 """
   Harness for conducting experiments for MF Optimisation.
-  -- kandasamy@cs.cmu.edu
+
 """
 
 # pylint: disable=import-error
@@ -121,7 +121,7 @@ class MFOptExperimenter(BasicExperimenter):
             else:
                 curr_mfof = self.mfof
             if method in ['gp_ucb', 'gp_ei', 'mf_gp_ucb', 'mf_gp_ucb_finite', 'mf_sko']:
-                # @junxiong, call the subfunction
+                # call the sub_function
                 _, _, opt_hist = mfgpb_from_mfoptfunc(curr_mfof, self.max_capital,
                                                       acq=method,
                                                       options=self.method_options[method],
@@ -177,6 +177,9 @@ class MFOptExperimenter(BasicExperimenter):
             # Print out the results
             comp_opt_val = opt_hist.true_curr_opt_vals[-1]
             self._print_method_result(method, comp_opt_val, opt_hist.query_at_opt_fidel.sum())
+            print ("time statics:", opt_hist.durations)
+            print ("true opt value:", opt_hist.true_curr_opt_vals)
+
         # for meth_iter ends here -------------------------------------------------------
 
         # Now save the results of this experiment in to_be_saved

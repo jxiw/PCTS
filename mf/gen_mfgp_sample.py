@@ -1,6 +1,6 @@
 """
   Used to generate a sample from an MFGP sample.
-  -- kandasamy@cs.cmu.edu
+
 """
 
 # pylint: disable=import-error

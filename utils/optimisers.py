@@ -1,6 +1,6 @@
 """
   A collection of wrappers for optimisng a function.
-  -- kandasamy@cs.cmu.edu
+
 """
 
 # pylint: disable=import-error

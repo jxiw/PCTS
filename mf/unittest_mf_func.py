@@ -1,6 +1,6 @@
 """
   Unit tests for mf_func.py
-  -- kandasamy@cs.cmu.edu
+
 """
 
 # pylint: disable=import-error

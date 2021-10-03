@@ -1,0 +1,13 @@
+('generated stochastic delays:', [array([ 2, 11,  5, ...,  2,  3,  1])])
+('opt_fidel_cost:', 1.0)
+Running Experiment1: 
+('total budget:', 600)
+Auto Init: 
+C: 0.8313313703582592
+nu: 0.8313313703582592
+Budget Remaining: 591.984206915
+Number of MFHOO Instances: 1
+Budget per MFHOO Instance:590.984206915
+Running SOO number: 1 rho: 0.95 nu: 0.8313313703582592
+delay_type: HOO
+policy: UCBV

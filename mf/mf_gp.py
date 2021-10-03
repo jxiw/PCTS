@@ -1,6 +1,6 @@
 """
   Implements the kernel, GP and fitter for multi-fidelity GPs.
-  -- kandasamy@cs.cmu.edu
+
 """
 # pylint: disable=import-error
 # pylint: disable=no-member

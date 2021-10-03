@@ -1,6 +1,6 @@
 """
   Unit tests for MF-GP-Bandit Utilities.
-  -- kandasamy@cs.cmu.edu
+
 """
 # pylint: disable=import-error
 # pylint: disable=no-member

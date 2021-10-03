@@ -1,6 +1,6 @@
 """
   A collection of utilities for ancillary purposes.
-  -- kandasamy@cs.cmu.edu
+
 """
 
 # pylint: disable=import-error

@@ -1,6 +1,4 @@
-#Author: Rajat Sen
 # general MF function object for doing tree search on scikit-learn classifier/regressor object
-
 
 
 from __future__ import print_function
@@ -26,7 +24,7 @@ from mf.mf_func import MFOptFunction
 import warnings
 from sklearn.model_selection import cross_val_score
 import pandas as pd
-
+import time
 
 
 def return_scoring_function(tag):
@@ -161,6 +159,7 @@ class MFTreeFunction(MFOptFunction):
 
 
 	def _mf_func(self, z, x):
+		# print("evaluate:", z, x)
 		pgrid = convert_values_to_dict(list(x),self.problem_bounds,self.keys, self.param_dict)
 		grid = merge_two_dicts(pgrid,self.fixed_params)
 		gbm = self.base_estimator
@@ -170,7 +169,13 @@ class MFTreeFunction(MFOptFunction):
 		inds = np.random.choice(r,num_data_curr)
 		feat_curr = self.X[inds]
 		label_curr = self.y[inds]
-		return self.get_kfold_val_score(gbm, feat_curr, label_curr)
+		score = self.get_kfold_val_score(gbm, feat_curr, label_curr)
+		# here we have delay
+		delay = 4
+		# print("delay:", delay)
+		time.sleep(delay)
+		#
+		return score
 
 	def get_kfold_val_score(self,clf, X, Y, num_folds=None,random_seed = 512):
 		st0 = np.random.get_state()

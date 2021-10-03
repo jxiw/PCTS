@@ -1,6 +1,6 @@
 """
   A module which implements different instances of GPs.
-  -- kandasamy@cs.cmu.edu
+
 """
 
 # pylint: disable=import-error

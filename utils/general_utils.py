@@ -1,6 +1,6 @@
 """
   A collection of very generic python utilities.
-  -- kandasamy@cs.cmu.edu
+
 """
 
 # pylint: disable=import-error

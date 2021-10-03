@@ -1,6 +1,6 @@
 """
   A collection of utilities for MF-GP Bandits.
-  -- kandasamy@cs.cmu.edu
+
 """
 # pylint: disable=import-error
 # pylint: disable=no-member

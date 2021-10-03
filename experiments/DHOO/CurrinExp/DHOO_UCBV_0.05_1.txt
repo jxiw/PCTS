@@ -1,0 +1,4 @@
+('generated stochastic delays:', [array([ 2, 11,  5, ...,  2,  3,  1])])
+('opt_fidel_cost:', 1.1)
+Running Experiment1: 
+('total budget:', 600)

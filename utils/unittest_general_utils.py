@@ -1,6 +1,6 @@
 """
   Test cases for functions in general_utils.py
-  -- kandasamy@cs.cmu.edu
+
 """
 
 # pylint: disable=import-error

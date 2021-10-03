@@ -1,6 +1,6 @@
 """
   Unit tests for MF-GP-Bandits
-  -- kandasamy@cs.cmu.edu
+
 """
 # pylint: disable=import-error
 # pylint: disable=no-member
@@ -11,7 +11,7 @@
 
 import numpy as np
 # Local
-from examples.synthetic_functions import get_mf_hartmann_as_mfof
+from experiments.synthetic_functions import get_mf_hartmann_as_mfof
 from gen_mfgp_sample import gen_simple_mfgp_as_mfof
 from mf_func import get_noisy_mfof_from_mfof
 import mf_gp_bandit

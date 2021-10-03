@@ -1,7 +1,7 @@
 """
   Monitors are used to monitor the progress of any algorithm. Here we implement
   the most basic monitor which will be inherited by monitors for specific processes.
-  -- kandasamy@cs.cmu.edu
+
 """
 
 import sys

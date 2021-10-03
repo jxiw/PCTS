@@ -1,5 +1,3 @@
-# Author: Rajat Sen
-
 from __future__ import division
 from __future__ import print_function
 
@@ -12,15 +10,14 @@ if module_path not in sys.path:
     sys.path.append(module_path)
 
 import numpy as np
-# from examples.synthetic_functions import *
-# import brewer2mpl
 import random
 import sys
 import time
-from waiting import wait, TimeoutExpired
 from concurrent.futures import ThreadPoolExecutor
 
 nu_mult = 1.0  # multiplier to the nu parameter
+
+executor = ThreadPoolExecutor(max_workers=40)
 
 
 def flip(p):
@@ -28,7 +25,7 @@ def flip(p):
 
 
 class MF_node(object):
-    def __init__(self, cell, value, fidel, upp_bound, height, dimension, num):
+    def __init__(self, cell, value, fidel, upp_bound, height, dimension, num, hoo_config):
         '''This is a node of the MFTREE
         cell: tuple denoting the bounding boxes of the partition
         m_value: mean value of the observations in the cell and its children
@@ -40,6 +37,7 @@ class MF_node(object):
         dimension: the dimension of the parent that was halved in order to obtain this cell
         num: number of queries inside this partition so far
         left,right,parent: pointers to left, right and parent
+        hoo_config: hoo config
         '''
         # cell is the range of partition
         self.cell = cell
@@ -52,13 +50,14 @@ class MF_node(object):
         self.dimension = dimension
         self.num = num
         self.t_bound = upp_bound
-        # for UCB-V policy
-        self.bound = 0.1
-        self.const = 0.1
-        self.second_moment_value = value**2
-        self.policy = "UCBV"
+        # init delay type
+        self.policy = hoo_config["policy"]
+        self.delay_type = hoo_config["delay_type"]
+        if self.policy == "UCBV":
+            self.ucbv_bound = hoo_config["ucbv_bound"]
+            self.ucbv_const = hoo_config["ucbv_const"]
+        self.second_moment_value = value ** 2
         self.variance = 0
-
         self.left = None
         self.right = None
         self.parent = None
@@ -85,6 +84,16 @@ class MF_node(object):
             return 1 + max(self.left.max_height(), self.right.max_height())
         else:
             return 1
+
+    def opt_value(self):
+        if self.left is None and self.right is not None:
+            return max(self.value, self.right.opt_value())
+        elif self.left is not None and self.right is None:
+            return max(self.value, self.left.opt_value())
+        elif self.left is not None and self.right is not None:
+            return max(self.value, self.left.opt_value(), self.right.opt_value())
+        else:
+            return self.value
 
 
 def serializable_MF_node(node):
@@ -203,8 +212,8 @@ class MF_tree(object):
             parent.m_value = (parent.num * parent.m_value + val) / (1.0 + parent.num)
             # for UCB-V policy
             # update the second moment
-            parent.second_moment_value = (parent.num * parent.second_moment_value + val**2) / (1.0 + parent.num)
-            parent.variance = parent.second_moment_value - parent.m_value**2
+            parent.second_moment_value = (parent.num * parent.second_moment_value + val ** 2) / (1.0 + parent.num)
+            parent.variance = parent.second_moment_value - parent.m_value ** 2
             parent.num = parent.num + 1.0
             # get the up bound which also consider the exploration
             # why we ignore the exploration term here.
@@ -226,7 +235,14 @@ class MF_tree(object):
         if root.policy == 'UCB1':
             root.t_bound = root.upp_bound + np.sqrt(2 * (self.sigma ** 2) * np.log(t) / root.num)
         elif root.policy == 'UCBV':
-            root.t_bound = root.upp_bound + np.sqrt(root.const * root.variance * np.log(t) / root.num) + (root.bound * np.log(t) / root.num)
+            # print("root.num:", root.num)
+            # print("ucbv_const:", root.ucbv_const)
+            # root.t_bound = root.upp_bound + np.sqrt(root.ucbv_const * root.variance * np.log(t) / root.num) + (
+            #         root.ucbv_bound * np.log(t) / root.num)
+            # print("ucbv_bound", root.ucbv_bound)
+            # print("variance", root.variance)
+            root.t_bound = root.upp_bound + np.sqrt(2 * root.variance * np.log(t) / root.num) + (
+                    3 * root.ucbv_const * root.ucbv_bound * np.log(t) / root.num)
         else:
             raise Exception("policy is not found")
         maxi = None
@@ -294,42 +310,62 @@ class MF_tree(object):
             return self.get_next_node(root.left)
 
         # # select the next node according to the softmax of t bound
-        prob = np.exp(root.left.t_bound) / (np.exp(root.left.t_bound) + np.exp(root.right.t_bound))
-        bit = flip(prob)
-        if bit:
-            return self.get_next_node(root.left)
-        else:
-            return self.get_next_node(root.right)
+        # prob = np.exp(root.left.t_bound) / (np.exp(root.left.t_bound) + np.exp(root.right.t_bound))
+        # bit = flip(prob)
+        # if bit:
+        #     return self.get_next_node(root.left)
+        # else:
+        #     return self.get_next_node(root.right)
 
         # select next nod according to the t bound ...
-        # if root.left.t_bound > root.right.t_bound:
-        #     return self.get_next_node(root.left)
-        # elif root.left.t_bound < root.right.t_bound:
-        #     return self.get_next_node(root.right)
-        # else:
-        #     bit = flip(0.5)
-        #     if bit:
-        #         return self.get_next_node(root.left)
-        #     else:
-        #         return self.get_next_node(root.right)
+        if root.left.t_bound > root.right.t_bound:
+            return self.get_next_node(root.left)
+        elif root.left.t_bound < root.right.t_bound:
+            return self.get_next_node(root.right)
+        else:
+            bit = flip(0.5)
+            if bit:
+                return self.get_next_node(root.left)
+            else:
+                return self.get_next_node(root.right)
 
-    def get_current_best(self, root):
+    def get_current_best(self, root, option=0):
         '''
         get current best cell from the tree
         '''
-        if root is None:
-            return
-        if root.right is None and root.left is None:
-            val = root.m_value - self.nu * ((self.rho) ** (root.height))
-            if self.maxi < val:
-                self.maxi = val
-                cell = list(root.cell)
-                self.current_best = np.array([(s[0] + s[1]) / 2.0 for s in cell])
-            return
-        if root.left:
-            self.get_current_best(root.left)
-        if root.right:
-            self.get_current_best(root.right)
+        if root.policy == "HOO":
+            if root is None:
+                return
+            if root.right is None and root.left is None:
+                val = root.m_value - self.nu * ((self.rho) ** (root.height))
+                if self.maxi < val:
+                    self.maxi = val
+                    cell = list(root.cell)
+                    self.current_best = np.array([(s[0] + s[1]) / 2.0 for s in cell])
+                return
+            if root.left:
+                self.get_current_best(root.left)
+            if root.right:
+                self.get_current_best(root.right)
+        else:
+            if root is None:
+                return
+            if root.right is None and root.left is None:
+                if option == 0:
+                    val = root.m_value - self.nu * ((self.rho) ** (root.height))
+                elif option == 1:
+                    val = root.value
+                elif option == 2:
+                    val = root.m_value
+                if self.maxi < val:
+                    self.maxi = val
+                    cell = list(root.cell)
+                    self.current_best = np.array([(s[0] + s[1]) / 2.0 for s in cell])
+                return
+            if root.left:
+                self.get_current_best(root.left, option)
+            if root.right:
+                self.get_current_best(root.right, option)
 
 
 class MFHOO(object):
@@ -348,7 +384,8 @@ class MFHOO(object):
     debug: If true then more messages are printed
     '''
 
-    def __init__(self, mfobject, nu, rho, budget, sigma, C, tol=1e-3, \
+    def __init__(self, mfobject, nu, rho, budget, sigma, C,
+                 hoo_config, tol=1e-3, \
                  Randomize=False, Auto=False, value_dict={}, \
                  CAPITAL='Time', debug='True'):
         self.mfobject = mfobject
@@ -365,6 +402,9 @@ class MFHOO(object):
         self.value_dict = value_dict
         self.CAPITAL = CAPITAL
         self.debug = debug
+        self.hoo_config = hoo_config
+        self.policy = hoo_config["policy"]
+        self.delay_type = hoo_config["delay_type"]
         if Auto:
             z1 = 0.8
             z2 = 0.2
@@ -394,19 +434,19 @@ class MFHOO(object):
         self.Tree = MF_tree(nu, rho, self.sigma, C, root)
         self.Tree.update_tbounds(self.Tree.root, self.t)
         self.cost = self.cost + cost
-        # change after delay
-        # maximal max_delay.
-        self.ts = 0
-        self.under_evaluate_ts = []
+        # delay information
         self.node_under_evaluation = []
-        self.max_delay = 1000
-        self.executor = ThreadPoolExecutor(max_workers=20)
+        # self.ts = 0
+        # self.under_evaluate_ts = []
+        # self.max_delay = 100
 
-    # @junxiong key function to change, need to max_delay the execution, get the value of the current point.
+    # key function to change, need to max_delay the execution, get the value of the current point.
     def get_value(self, cell, fidel):
         '''cell: tuple'''
         # get the middle point of the selected cell
         x = np.array([(s[0] + s[1]) / 2.0 for s in list(cell)])
+        # get random value between s[0] and s[1]
+        # x = np.array([random.uniform(s[0], s[1]) for s in list(cell)])
         return self.mfobject.eval_at_fidel_single_point_normalised([fidel], x)
 
     def querie(self, cell, height, rho, nu, dimension, option=1):
@@ -424,6 +464,7 @@ class MFHOO(object):
             if abs(current.fidelity - z) <= self.tol:
                 value = current.value
                 cost = 0
+                # print("value:", value)
             else:
                 t1 = time.time()
                 value = self.get_value(cell, z)
@@ -435,10 +476,7 @@ class MFHOO(object):
                 # set the fidelity
                 current.fidelity = z
                 self.value_dict[cell] = current
-                if self.CAPITAL == 'Time':
-                    cost = t2 - t1
-                else:
-                    cost = self.mfobject.eval_fidel_cost_single_point_normalised([z])
+                cost = t2 - t1
         else:
             t1 = time.time()
             # get the value of the selected cell
@@ -446,14 +484,14 @@ class MFHOO(object):
             t2 = time.time()
             bhi = 2 * diam + value
             # create the MF cache node
-            self.value_dict[cell] = MF_node(cell, value, z, bhi, height, dimension, 1)
-            if self.CAPITAL == 'Time':
-                cost = t2 - t1
-            else:
-                cost = self.mfobject.eval_fidel_cost_single_point_normalised([z])
+            self.value_dict[cell] = MF_node(cell, value, z, bhi, height, dimension, 1, self.hoo_config)
+            cost = t2 - t1
+            # print (cell)
+            # print (value)
 
         bhi = 2 * diam + value
-        current_object = MF_node(cell, value, z, bhi, height, dimension, 1)
+        # print('value:', value)
+        current_object = MF_node(cell, value, z, bhi, height, dimension, 1, self.hoo_config)
         return current_object, cost
 
     # split children for the current node
@@ -486,7 +524,7 @@ class MFHOO(object):
                 else:
                     cell = cell + [(l[i], l[i + 1])]
             cell = tuple(cell)
-            # @junxiong invoke the query.
+            # invoke the query.
             # dimension is the selected interval
             child, c = self.querie(cell, h, rho, nu, dimension, option)
             children = children + [child]
@@ -494,61 +532,70 @@ class MFHOO(object):
 
         return children, cost
 
-    # def take_parallel_delay_HOO_step(self):
-    #     # run HOO at one iteration
-    #     # iterate from the root node
-    #     current = self.Tree.get_next_node(self.Tree.root)
-    #     # split the children from the current node
-    #     # multi thread apps start here
-    #     wait(lambda: len(self.under_evaluate_ts) == 0 or self.under_evaluate_ts[0] + self.max_delay < self.ts)
-    #
-    #     self.node_under_evaluation.append(current)
-    #     self.under_evaluate_ts.append(self.ts)
-    #     future = self.executor.submit(self.split_children, current, self.rho, self.nu)
-    #     # call back function
-    #     def callback_fun(result_future, invoke_ts, invoke_node):
-    #         children, cost = result_future.result()
-    #         # call back function after return the children
-    #         self.t = self.t + 2
-    #         self.cost = self.cost + cost
-    #         lnode = self.Tree.insert_node(self.Tree.root, children[0])
-    #         self.Tree.update_parents(lnode, lnode.value)
-    #         rnode = self.Tree.insert_node(self.Tree.root, children[1])
-    #         self.Tree.update_parents(rnode, rnode.value)
-    #         self.Tree.update_tbounds(self.Tree.root, self.t)
-    #         # remove the useless information
-    #         self.node_under_evaluation.remove(invoke_node)
-    #         self.under_evaluate_ts.remove(invoke_ts)
-    #
-    #     future.add_done_callback(partial(callback_fun, invoke_ts=self.ts, invoke_node=current))
-    #
-    #     self.ts += 1
 
-    def take_parallel_delay_HOO_step(self):
+    def take_DHOO_step(self):
+
+        # define back function to avoid delay waiting
+        def callback_fun(result_future, invoke_node, child_num):
+            # print("callback function")
+            children, cost = result_future.result()
+            # after get two chilren
+            self.cost = self.cost + cost
+            if child_num == 0:
+                lnode = self.Tree.insert_node(self.Tree.root, children)
+                self.Tree.update_parents(lnode, lnode.value)
+            else:
+                rnode = self.Tree.insert_node(self.Tree.root, children)
+                self.Tree.update_parents(rnode, rnode.value)
+            # remove the useless information
+            if invoke_node in self.node_under_evaluation:
+                self.node_under_evaluation.remove(invoke_node)
+
+        # wait(lambda: len(self.under_evaluate_ts) == 0 or self.under_evaluate_ts[0] + self.max_delay < self.ts)
+
         # run HOO at one iteration
         current = self.Tree.get_next_node(self.Tree.root)
-        # split the children from the current node
-        future = self.executor.submit(self.split_children, current, self.rho, self.nu)
-
-        # call back function
-        def callback_fun(result_future, root):
-            children, cost = result_future.result()
-            # call back function after return the children
+        if current not in self.node_under_evaluation:
+            # self.under_evaluate_ts.append(self.ts)
+            self.node_under_evaluation.append(current)
             self.t = self.t + 2
-            self.cost = self.cost + cost
-            lnode = self.Tree.insert_node(root, children[0])
-            self.Tree.update_parents(lnode, lnode.value)
-            rnode = self.Tree.insert_node(root, children[1])
-            self.Tree.update_parents(rnode, rnode.value)
-            self.Tree.update_tbounds(root, self.t)
+            self.Tree.update_tbounds(self.Tree.root, self.t)
+            # if current node is not in the pending evaluations.
+            # then split the children from the current node
 
-        future.add_done_callback(partial(callback_fun, root=self.Tree.root))
-
-    def take_Stoo_step(self):
-        current = self.Tree.get_next_node(self.Tree.root)
-        children, cost = self.split_children(current, self.rho, self.nu, 1)
-        self.t = self.t + 2
-        self.cost = self.cost + cost
+            # the child cells of parent cells
+            pcell = list(current.cell)
+            # get the range of the span
+            span = [abs(pcell[i][1] - pcell[i][0]) for i in range(len(pcell))]
+            if self.Randomize:
+                dimension = np.random.choice(range(len(pcell)))
+            else:
+                dimension = np.argmax(span)
+            dd = len(pcell)
+            if dimension == current.dimension:
+                dimension = (current.dimension - 1) % dd
+            h = current.height + 1
+            # split the parent cell range into 2 sub-intervals
+            # only for the selected interval
+            l = np.linspace(pcell[dimension][0], pcell[dimension][1], 3)
+            # we only have two children
+            for i in range(len(l) - 1):
+                cell = []
+                for j in range(len(pcell)):
+                    # if j is not equal to selected dimension
+                    if j != dimension:
+                        # do not change the other cells
+                        cell = cell + [pcell[j]]
+                    else:
+                        cell = cell + [(l[i], l[i + 1])]
+                cell = tuple(cell)
+                # invoke the query.
+                # dimension is the selected interval
+                future = executor.submit(self.querie, cell, h, self.rho, self.nu, dimension)
+                future.add_done_callback(partial(callback_fun, invoke_node=current, child_num=i))
+            return True
+        else:
+            return False
 
     def take_HOO_step(self):
         current = self.Tree.get_next_node(self.Tree.root)
@@ -560,54 +607,96 @@ class MFHOO(object):
         rnode = self.Tree.insert_node(self.Tree.root, children[1])
         self.Tree.update_parents(rnode, rnode.value)
         self.Tree.update_tbounds(self.Tree.root, self.t)
-
-    def take_delay_HOO_step(self):
-        current = self.Tree.get_next_node(self.Tree.root)
-        if current not in self.node_under_evaluation:
-            self.node_under_evaluation.append(current)
-            self.under_evaluate_ts.append(self.ts)
-        # test whether reach to the delay timeout
-        if self.under_evaluate_ts[0] + self.max_delay <= self.ts:
-            select_node = self.node_under_evaluation[0]
-            children, cost = self.split_children(select_node, self.rho, self.nu, 1)
-            self.t = self.t + 2
-            self.cost = self.cost + cost
-            lnode = self.Tree.insert_node(self.Tree.root, children[0])
-            self.Tree.update_parents(lnode, lnode.value)
-            rnode = self.Tree.insert_node(self.Tree.root, children[1])
-            self.Tree.update_parents(rnode, rnode.value)
-            self.Tree.update_tbounds(self.Tree.root, self.t)
-            self.node_under_evaluation.pop(0)
-            self.under_evaluate_ts.pop(0)
-        self.ts += 1
+        return True
 
     def run(self):
         # total number of updates, total number of nodes, depth of the tree
         # update
         iter_num = 0
+        print("delay_type:", self.delay_type)
+        print("policy:", self.policy)
+        time_durations = []
+        noise_values = []
+        best_points = []
+        best_points1 = []
+        best_points2 = []
         start_time = time.time()
-        duration = 60
         current_time = time.time()
-        # while self.cost <= self.budget:
-        while current_time - start_time < duration:
-            self.take_HOO_step()
-            iter_num += 1
-            # print("cost:%f, budget%f"%(self.cost, self.budget))
+        while (current_time - start_time) <= self.budget:
+            if self.delay_type == "HOO":
+                ret = self.take_HOO_step()
+                iter_num += 1
+            elif self.delay_type == "DHOO":
+                ret = self.take_DHOO_step()
+                iter_num += 1
+            else:
+                raise Exception('unknown method')
             current_time = time.time()
-            # if current_time - start_time > duration:
-            #     break
+            if ret:
+                # print("current iterations:%d" % iter_num)
+                # print("current HOO number of nodes:%d" % self.Tree.root.total_children())
+                # print("HOO height:%d" % self.Tree.root.max_height())
+                # print("duration:%d" % (current_time - start_time))
+                current_opt = self.Tree.root.opt_value()
+                # print("optimal value:%f " % current_opt)
+                current_best_point = self.get_point()
+                # print("best point:", current_best_point)
+                best_points.append(current_best_point)
+                time_durations.append((current_time - start_time))
+                noise_values.append(current_opt)
+                best_points1.append(self.get_point(option=1))
+                best_points2.append(self.get_point(option=2))
+
         end_time = time.time()
         print(self.get_point())
-        print("iterations:%d" % iter_num)
-        print("HOO number of nodes:%d" % self.Tree.root.total_children())
-        print("HOO height:%d" % self.Tree.root.max_height())
-        print("duration:%d" % (end_time - start_time))
-        print("t: %d" % self.t)
-        # tree_to_json = serializable_MF_node(self.Tree.root)
-        # print(tree_to_json)
+        print("final iterations:%d" % iter_num)
+        print("final HOO number of nodes:%d" % self.Tree.root.total_children())
+        print("final HOO height:%d" % self.Tree.root.max_height())
+        print("final duration:%d" % (end_time - start_time))
+        print("final optimal value:%f " % self.Tree.root.opt_value())
+        print("time durations:", time_durations)
+        print("noisy values:", noise_values)
+        true_values = []
+        point_value_dict = dict()
+        print("data points:")
+        ## evaluate the true value without noisy of selected points at each timestamp
+        for point in best_points:
+            point_str_hash = str(point)
+            if point_str_hash in point_value_dict:
+                true_value = point_value_dict[point_str_hash]
+                true_values.append(true_value)
+            else:
+                true_value = self.mfobject.eval_single_noiseless(point)
+                true_values.append(true_value)
+                point_value_dict[point_str_hash] = true_value
+        print("values:", true_values)
+        return true_values[-1]
+        # if self.delay_type == "DHOO":
+        #     true_values1 = []
+        #     for point in best_points1:
+        #         point_str_hash = str(point)
+        #         if point_str_hash in point_value_dict:
+        #             true_value = point_value_dict[point_str_hash]
+        #             true_values1.append(true_value)
+        #         else:
+        #             true_value = self.mfobject.eval_single_noiseless(point)
+        #             true_values1.append(true_value)
+        #             point_value_dict[point_str_hash] = true_value
+        #     print("real values1:", true_values1)
+        #     true_values2 = []
+        #     for point in best_points2:
+        #         point_str_hash = str(point)
+        #         if point_str_hash in point_value_dict:
+        #             true_value = point_value_dict[point_str_hash]
+        #             true_values2.append(true_value)
+        #         else:
+        #             true_value = self.mfobject.eval_single_noiseless(point)
+        #             true_values2.append(true_value)
+        #             point_value_dict[point_str_hash] = true_value
+        #     print("real values2:", true_values2)
 
-    def get_point(self):
-        self.Tree.get_current_best(self.Tree.root)
+    def get_point(self, option=0):
+        self.Tree.get_current_best(self.Tree.root, option=option)
         return self.Tree.current_best
 
 
@@ -616,12 +705,15 @@ class MFPOO(object):
     MFPOO object that spawns multiple MFHOO instances
     '''
 
-    def __init__(self, mfobject, nu_max, rho_max, total_budget, sigma, C, mult, tol=1e-3, Randomize=False, Auto=False,
-                 unit_cost=1.0, CAPITAL='Time', debug='True'):
+    def __init__(self, mfobject, nu_max, rho_max, total_budget,
+                 sigma, C, mult, hoo_config,
+                 tol=1e-3, Randomize=False, Auto=False, debug=True,
+                 unit_cost=1.0):
+        # we only support time as cost unit
         self.mfobject = mfobject
         self.nu_max = nu_max
         self.rho_max = rho_max
-        # total budget is the cost
+        # total budget is the real time
         self.total_budget = total_budget
         self.C = C
         self.t = 0
@@ -631,9 +723,9 @@ class MFPOO(object):
         self.cost = 0
         self.value_dict = {}
         self.MH_arr = []
-        # default CAPITAL is time
-        self.CAPITAL = CAPITAL
         self.debug = debug
+        # default CAPITAL is time
+        self.hoo_config = hoo_config
         if Auto:
             if unit_cost is None:
                 z1 = 1.0
@@ -653,28 +745,24 @@ class MFPOO(object):
             self.nu_max = nu_mult * self.C
             if unit_cost is None:
                 unit_cost = t3 - t1
-                if self.debug:
-                    print('Unit Cost: ', unit_cost)
+                # if self.debug:
+                print('Unit Cost: ', unit_cost)
             if self.debug:
                 print('Auto Init: ')
                 print('C: ' + str(self.C))
                 print('nu: ' + str(self.nu_max))
-            c1 = self.mfobject.eval_fidel_cost_single_point_normalised([z1])
-            c2 = self.mfobject.eval_fidel_cost_single_point_normalised([z2])
-            self.total_budget = self.total_budget - c1 - c2
-            if self.CAPITAL == 'Time':
-                self.total_budget = self.total_budget - (t2 - t1)
+            self.total_budget = self.total_budget - (t2 - t1)
             if self.debug:
                 print('Budget Remaining: ' + str(self.total_budget))
 
-        if self.CAPITAL == 'Time':
-            self.unit_cost = unit_cost
-        else:
-            self.unit_cost = self.mfobject.eval_fidel_cost_single_point_normalised([1.0])
+        self.unit_cost = unit_cost
         n = max(self.total_budget / self.unit_cost, 1)
         Dm = int(np.log(2.0) / np.log(1 / self.rho_max))
         nHOO = int(mult * Dm * np.log(n / np.log(n + 1)))
-        self.nHOO = max(1, int(min(max(1, nHOO), n / 2 + 1)))
+        if hoo_config['max_hoo'] < 0:
+            self.nHOO = max(1, int(min(max(1, nHOO), n / 2 + 1)))
+        else:
+            self.nHOO = min(max(1, int(min(max(1, nHOO), n / 2 + 1))), hoo_config['max_hoo'])
         self.budget = (self.total_budget - self.nHOO * self.unit_cost) / float(self.nHOO)
         if self.debug:
             print('Number of MFHOO Instances: ' + str(self.nHOO))
@@ -682,13 +770,15 @@ class MFPOO(object):
 
     def run_all_MFHOO(self):
         nu = self.nu_max
+        opt_val = -100000
+        print("number of HOO:", self.nHOO)
         for i in range(self.nHOO):
             # run HOO with different rho and nu.
             rho = self.rho_max ** (float(self.nHOO) / (self.nHOO - i))
-            MH = MFHOO(mfobject=self.mfobject, nu=nu, rho=rho, budget=self.budget, sigma=self.sigma, C=self.C, tol=1e-3,
-                       Randomize=False, Auto=False, value_dict=self.value_dict, CAPITAL=self.CAPITAL, debug=self.debug)
+            MH = MFHOO(mfobject=self.mfobject, nu=nu, rho=rho, budget=self.budget, sigma=self.sigma, C=self.C,
+                       hoo_config=self.hoo_config, tol=1e-3, Randomize=False, Auto=False, value_dict=self.value_dict, debug=self.debug)
             print('Running SOO number: ' + str(i + 1) + ' rho: ' + str(rho) + ' nu: ' + str(nu))
-            MH.run()
+            opt_val = max(opt_val, MH.run())
             print('Done!')
             self.cost = self.cost + MH.cost
             if MH.cflag:
@@ -701,6 +791,7 @@ class MFPOO(object):
                     print('nu_max: ' + str(nu))
             self.value_dict = MH.value_dict
             self.MH_arr = self.MH_arr + [MH]
+        print("opt_val:", opt_val)
 
     def get_point(self):
         points = [H.get_point() for H in self.MH_arr]
@@ -713,7 +804,6 @@ class MFPOO(object):
             self.cost = self.cost + self.nHOO * self.unit_cost
 
         index = np.argmax(evals)
-
         newp = []
         for p in points:
             _, npoint = self.mfobject.get_unnormalised_coords(None, p)

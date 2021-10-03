@@ -1,6 +1,6 @@
 """
   Unit tests for optimers.
-  -- kandasamy@cs.cmu.edu
+
 """
 
 # pylint: disable=import-error

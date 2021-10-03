@@ -1,0 +1,332 @@
+('generated stochastic delays:', [array([ 2, 11,  5, ...,  2,  3,  1])])
+('test function', 'Hartmann6')
+('opt_fidel_cost:', 1.0)
+Running Experiment1: 
+('total budget:', 600)
+Setting unit cost automatically as None was supplied
+Unit Cost:  4.00499916077
+Auto Init: 
+C: 0.008422546129901952
+nu: 0.008422546129901952
+Budget Remaining: 591.994100809
+Number of MFHOO Instances: 22
+Budget per MFHOO Instance:22.9038236033
+number of HOO: 22
+Running SOO number: 1 rho: 0.95 nu: 0.008422546129901952
+delay_type: HOO
+policy: UCB1
+[0.25 0.5  0.5  0.5  0.5  0.75]
+final iterations:3
+final HOO number of nodes:7
+final HOO height:3
+final duration:24
+final optimal value:0.765254 
+time durations: [8.008557081222534, 16.015711069107056, 24.017598152160645]
+noisy values: [0.568923612459111, 0.568923612459111, 0.7652541077718751]
+data points:
+values: [0.5713312483035078, 0.5713312483035078, 0.7809775383635229]
+Done!
+Running SOO number: 2 rho: 0.947682420603 nu: 0.008422546129901952
+delay_type: HOO
+policy: UCB1
+[0.25 0.5  0.5  0.5  0.5  0.75]
+final iterations:3
+final HOO number of nodes:7
+final HOO height:3
+final duration:24
+final optimal value:0.765331 
+time durations: [8.006489992141724, 16.015586137771606, 24.024996042251587]
+noisy values: [0.5689294860246139, 0.5689294860246139, 0.7653307306133207]
+data points:
+values: [0.5713312483035078, 0.5713312483035078, 0.7809775383635229]
+Done!
+Updating C
+C: 0.01179156458186273
+nu_max: 0.01179156458186273
+Running SOO number: 3 rho: 0.945139612953 nu: 0.01179156458186273
+delay_type: HOO
+policy: UCB1
+[0.25 0.5  0.5  0.5  0.5  0.75]
+final iterations:3
+final HOO number of nodes:7
+final HOO height:3
+final duration:24
+final optimal value:0.765415 
+time durations: [8.008153915405273, 16.018163919448853, 24.023586988449097]
+noisy values: [0.5689359303981348, 0.5689359303981348, 0.7654145845371229]
+data points:
+values: [0.5713312483035078, 0.5713312483035078, 0.7809775383635229]
+Done!
+Updating C
+C: 0.016508190414607823
+nu_max: 0.016508190414607823
+Running SOO number: 4 rho: 0.942337078503 nu: 0.016508190414607823
+delay_type: HOO
+policy: UCB1
+[0.25 0.5  0.5  0.5  0.5  0.75]
+final iterations:3
+final HOO number of nodes:7
+final HOO height:3
+final duration:24
+final optimal value:0.765507 
+time durations: [8.001229047775269, 16.0051851272583, 24.01192808151245]
+noisy values: [0.568943033011183, 0.568943033011183, 0.7655067424550226]
+data points:
+values: [0.5713312483035078, 0.5713312483035078, 0.7809775383635229]
+Done!
+Updating C
+C: 0.023111466580450952
+nu_max: 0.023111466580450952
+Running SOO number: 5 rho: 0.939232896673 nu: 0.023111466580450952
+delay_type: HOO
+policy: UCB1
+[0.25 0.5  0.5  0.5  0.5  0.75]
+final iterations:3
+final HOO number of nodes:7
+final HOO height:3
+final duration:24
+final optimal value:0.765609 
+time durations: [8.004887819290161, 16.00896382331848, 24.015947818756104]
+noisy values: [0.5689509001053326, 0.5689509001053326, 0.765608500235138]
+data points:
+values: [0.5713312483035078, 0.5713312483035078, 0.7809775383635229]
+Done!
+Running SOO number: 6 rho: 0.935775616278 nu: 0.023111466580450952
+delay_type: HOO
+policy: UCB1
+[0.25 0.5  0.5  0.5  0.5  0.75]
+final iterations:3
+final HOO number of nodes:7
+final HOO height:3
+final duration:24
+final optimal value:0.765721 
+time durations: [8.004669189453125, 16.008564233779907, 24.01288604736328]
+noisy values: [0.568959662076074, 0.568959662076074, 0.7657214376765725]
+data points:
+values: [0.5713312483035078, 0.5713312483035078, 0.7809775383635229]
+Done!
+Running SOO number: 7 rho: 0.931901385184 nu: 0.023111466580450952
+delay_type: HOO
+policy: UCB1
+[0.25 0.5  0.5  0.5  0.5  0.75]
+final iterations:3
+final HOO number of nodes:7
+final HOO height:3
+final duration:24
+final optimal value:0.765848 
+time durations: [8.010074138641357, 16.019140005111694, 24.02729296684265]
+noisy values: [0.5689694807472839, 0.5689694807472839, 0.765847500604714]
+data points:
+values: [0.5713312483035078, 0.5713312483035078, 0.7809775383635229]
+Done!
+Running SOO number: 8 rho: 0.927529976727 nu: 0.023111466580450952
+delay_type: HOO
+policy: UCB1
+[0.25 0.5  0.5  0.5  0.5  0.75]
+final iterations:3
+final HOO number of nodes:7
+final HOO height:3
+final duration:24
+final optimal value:0.765989 
+time durations: [8.006503105163574, 16.014134883880615, 24.021902084350586]
+noisy values: [0.5689805594416975, 0.5689805594416975, 0.7659891131201552]
+data points:
+values: [0.5713312483035078, 0.5713312483035078, 0.7809775383635229]
+Done!
+Running SOO number: 9 rho: 0.92255918465 nu: 0.023111466580450952
+delay_type: HOO
+policy: UCB1
+[0.25 0.5  0.5  0.5  0.5  0.75]
+final iterations:3
+final HOO number of nodes:7
+final HOO height:3
+final duration:24
+final optimal value:0.766149 
+time durations: [8.005404949188232, 16.01461410522461, 24.020854949951172]
+noisy values: [0.5689931571860967, 0.5689931571860967, 0.7661493337200966]
+data points:
+values: [0.5713312483035078, 0.5713312483035078, 0.7809775383635229]
+Done!
+Running SOO number: 10 rho: 0.916856748344 nu: 0.023111466580450952
+delay_type: HOO
+policy: UCB1
+[0.25 0.5  0.5  0.5  0.5  0.75]
+final iterations:3
+final HOO number of nodes:7
+final HOO height:3
+final duration:24
+final optimal value:0.766332 
+time durations: [8.004245042800903, 16.009863138198853, 24.016602993011475]
+noisy values: [0.5690076091756225, 0.5690076091756225, 0.7663320766082291]
+data points:
+values: [0.5713312483035078, 0.5713312483035078, 0.7809775383635229]
+Done!
+Running SOO number: 11 rho: 0.910248439423 nu: 0.023111466580450952
+delay_type: HOO
+policy: UCB1
+[0.25 0.5  0.5  0.5  0.5  0.75]
+final iterations:3
+final HOO number of nodes:7
+final HOO height:3
+final duration:24
+final optimal value:0.766542 
+time durations: [8.006702899932861, 16.01297903060913, 24.020339965820312]
+noisy values: [0.5690243569666023, 0.5690243569666023, 0.7665424321631218]
+data points:
+values: [0.5713312483035078, 0.5713312483035078, 0.7809775383635229]
+Done!
+Running SOO number: 12 rho: 0.9025 nu: 0.023111466580450952
+delay_type: HOO
+policy: UCB1
+[0.25 0.5  0.5  0.5  0.5  0.75]
+final iterations:3
+final HOO number of nodes:7
+final HOO height:3
+final duration:24
+final optimal value:0.766787 
+time durations: [8.007051944732666, 16.01171898841858, 24.0169939994812]
+noisy values: [0.5690439942513309, 0.5690439942513309, 0.7667871422545608]
+data points:
+values: [0.5713312483035078, 0.5713312483035078, 0.7809775383635229]
+Done!
+Running SOO number: 13 rho: 0.893288887973 nu: 0.023111466580450952
+delay_type: HOO
+policy: UCB1
+[0.25 0.5  0.5  0.5  0.5  0.75]
+final iterations:3
+final HOO number of nodes:7
+final HOO height:3
+final duration:24
+final optimal value:0.767075 
+time durations: [8.007999897003174, 16.014670848846436, 24.02359890937805]
+noisy values: [0.5690673384655247, 0.5690673384655247, 0.7670753246463706]
+data points:
+values: [0.5713312483035078, 0.5713312483035078, 0.7809775383635229]
+Done!
+Running SOO number: 14 rho: 0.882158434193 nu: 0.023111466580450952
+delay_type: HOO
+policy: UCB1
+[0.25 0.5  0.5  0.5  0.5  0.75]
+final iterations:3
+final HOO number of nodes:7
+final HOO height:3
+final duration:24
+final optimal value:0.767420 
+time durations: [8.001394033432007, 16.009767055511475, 24.01437211036682]
+noisy values: [0.5690955469702452, 0.5690955469702452, 0.7674196117531373]
+data points:
+values: [0.5713312483035078, 0.5713312483035078, 0.7809775383635229]
+Done!
+Running SOO number: 15 rho: 0.868440191708 nu: 0.023111466580450952
+delay_type: HOO
+policy: UCB1
+[0.25 0.5  0.5  0.5  0.5  0.75]
+final iterations:3
+final HOO number of nodes:7
+final HOO height:3
+final duration:24
+final optimal value:0.767838 
+time durations: [8.009809970855713, 16.016403913497925, 24.02675700187683]
+noisy values: [0.5691303138463794, 0.5691303138463794, 0.7678380054717069]
+data points:
+values: [0.5713312483035078, 0.5713312483035078, 0.7809775383635229]
+Done!
+Running SOO number: 16 rho: 0.851115449182 nu: 0.023111466580450952
+delay_type: HOO
+policy: UCB1
+[0.25 0.5  0.5  0.5  0.5  0.75]
+final iterations:3
+final HOO number of nodes:7
+final HOO height:3
+final duration:24
+final optimal value:0.768357 
+time durations: [8.008806943893433, 16.01511788368225, 24.020022869110107]
+noisy values: [0.5691742208685916, 0.5691742208685916, 0.7683570243078707]
+data points:
+values: [0.5713312483035078, 0.5713312483035078, 0.7809775383635229]
+Done!
+Running SOO number: 17 rho: 0.828552221471 nu: 0.023111466580450952
+delay_type: HOO
+policy: UCB1
+[0.25 0.5  0.5  0.5  0.5  0.75]
+final iterations:3
+final HOO number of nodes:7
+final HOO height:3
+final duration:24
+final optimal value:0.769017 
+time durations: [8.006356000900269, 16.013425827026367, 24.018335819244385]
+noisy values: [0.5692314040641718, 0.5692314040641718, 0.7690172990540042]
+data points:
+values: [0.5713312483035078, 0.5713312483035078, 0.7809775383635229]
+Done!
+Running SOO number: 18 rho: 0.797965037375 nu: 0.023111466580450952
+delay_type: HOO
+policy: UCB1
+[0.25 0.5  0.5  0.5  0.5  0.75]
+final iterations:3
+final HOO number of nodes:7
+final HOO height:3
+final duration:24
+final optimal value:0.769884 
+time durations: [8.010267972946167, 16.017030954360962, 24.02304697036743]
+noisy values: [0.569308922801866, 0.569308922801866, 0.769884057875118]
+data points:
+values: [0.5713312483035078, 0.5713312483035078, 0.7809775383635229]
+Done!
+Running SOO number: 19 rho: 0.754188366575 nu: 0.023111466580450952
+delay_type: HOO
+policy: UCB1
+[0.25 0.5  0.5  0.5  0.5  0.75]
+final iterations:3
+final HOO number of nodes:7
+final HOO height:3
+final duration:24
+final optimal value:0.771068 
+time durations: [8.005081176757812, 16.013797998428345, 24.019453048706055]
+noisy values: [0.5694198683616215, 0.5694198683616215, 0.771067855514291]
+data points:
+values: [0.5713312483035078, 0.5713312483035078, 0.7809775383635229]
+Done!
+Running SOO number: 20 rho: 0.686498783705 nu: 0.023111466580450952
+delay_type: HOO
+policy: UCB1
+[0.25 0.5  0.5  0.5  0.5  0.75]
+final iterations:3
+final HOO number of nodes:7
+final HOO height:3
+final duration:24
+final optimal value:0.772767 
+time durations: [8.004478931427002, 16.015528917312622, 24.025179862976074]
+noisy values: [0.5695914176942619, 0.5695914176942619, 0.7727668486247142]
+data points:
+values: [0.5713312483035078, 0.5713312483035078, 0.7809775383635229]
+Done!
+Running SOO number: 21 rho: 0.568800092276 nu: 0.023111466580450952
+delay_type: HOO
+policy: UCB1
+[0.25 0.5  0.5  0.5  0.5  0.75]
+final iterations:3
+final HOO number of nodes:7
+final HOO height:3
+final duration:24
+final optimal value:0.775341 
+time durations: [8.002217054367065, 16.009057998657227, 24.01511287689209]
+noisy values: [0.5698897077872331, 0.5698897077872331, 0.7753409098444494]
+data points:
+values: [0.5713312483035078, 0.5713312483035078, 0.7809775383635229]
+Done!
+Running SOO number: 22 rho: 0.323533544974 nu: 0.023111466580450952
+delay_type: HOO
+policy: UCB1
+[0.25 0.5  0.5  0.5  0.5  0.75]
+final iterations:3
+final HOO number of nodes:7
+final HOO height:3
+final duration:24
+final optimal value:0.779154 
+time durations: [8.063368082046509, 16.068549156188965, 24.07688808441162]
+noisy values: [0.5705112999248305, 0.5705112999248305, 0.7791538999570471]
+data points:
+values: [0.5713312483035078, 0.5713312483035078, 0.7809775383635229]
+Done!
+opt_val: 0.780977538364

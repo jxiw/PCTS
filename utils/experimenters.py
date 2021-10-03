@@ -1,6 +1,6 @@
 """
   Harness to run experiments and save results.
-  -- kandasamy@cs.cmu.edu
+
 """
 
 # pylint: disable=import-error

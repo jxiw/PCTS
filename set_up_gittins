@@ -1,4 +1,0 @@
-
-GITTINS_PATH="/Users/junxiong/Documents/HOO/MFTreeSearchCV-master/"
-PATH=$PATH:$GITTINS_PATH
-export PYTHONPATH=$GITTINS_PATH
