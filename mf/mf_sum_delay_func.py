@@ -16,14 +16,16 @@ class MFSumDelayFunction(object):
         super(MFSumDelayFunction, self).__init__()
         self.mf_funcs = mf_funcs
         self.delays = delays
+        self.max_avg_delay = max(self.delays)
         # for stochastic delay
         np.random.seed(seed_stochastic_delay)
         self.is_stochastic_delay = is_stochastic_delay
         self.stochastic_delays = [np.random.geometric(p=1 / float(delay), size=20000) for delay in delays]
         self.delay_cnt = 0
-        print("generated stochastic delays:", self.stochastic_delays)
+        # print("generated stochastic delays:", self.stochastic_delays)
         self.domain_dim = mf_funcs[0].domain_dim
         self.nr_executor = nr_executor
+        self.opt_fidel = [mf_func.opt_fidel for mf_func in mf_funcs]
         self.executor = ThreadPoolExecutor(max_workers=self.nr_executor)
 
     def _eval_at_fidel_single_point(self, mf_compose):
@@ -102,7 +104,13 @@ class MFSumDelayFunction(object):
         print (results)
         return
 
-    def eval_single_noiseless(self, X):
+    def eval_single_noiseless(self, Z, X):
+        mf_fun_values = []
+        for mf_fun in self.mf_funcs:
+            mf_fun_values.append(mf_fun.eval_single_noiseless(Z, X))
+        return sum(mf_fun_values)
+
+    def eval_single_opt_fidel_noiseless(self, X):
         mf_fun_values = []
         for mf_fun in self.mf_funcs:
             mf_fun_values.append(mf_fun.eval_single_noiseless(mf_fun.opt_fidel, X))

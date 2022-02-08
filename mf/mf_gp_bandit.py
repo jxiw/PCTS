@@ -70,6 +70,8 @@ mf_gp_bandit_args = [
   get_option_specs('next_pt_std_thresh', False, 0.005,
     ('If the std of the queried point queries below this times the kernel scale ',
      'frequently we will reduce the bandwidth range')),
+  get_option_specs('function', True, None,
+                   ('function to optimize')),
   ]
 # All of them including what is needed for fitting GP.
 all_mf_gp_bandit_args = all_mf_gp_args + mf_gp_bandit_args
@@ -129,12 +131,12 @@ class MFGPBandit(object):
     print(self.options)
     if self.options.delay_type == "constant":
       self.delays = np.full((20000), self.options.delay_expect)
-      self.delay_time = 0
+      self.delay_num = 0
     elif self.options.delay_type == "stochastic":
       np.random.seed(42)
       self.delay_prob = 1.0 / self.options.delay_expect
       self.delays = np.random.geometric(p=self.delay_prob, size=20000)
-      self.delay_time = 0
+      self.delay_num = 0
 
   @classmethod
   def _check_arg_vals(cls, arg_val, arg_name, allowed_vals):
@@ -188,7 +190,6 @@ class MFGPBandit(object):
     # Acquisition function should be evaluated via single evaluations.
     self.acq_query_type = 'single'
 
-
   def _set_up_acq_opt_rand(self):
     """ Sets up acquisition optimisation with direct. """
     def _random_max_wrap(*args):
@@ -206,7 +207,7 @@ class MFGPBandit(object):
     self.acq_query_type = 'multiple'
 
   # Book keeping methods ------------------------------------------------------------
-  def _update_history(self, pts_fidel, pts_domain, pts_val, pts_cost, at_opt_fidel, duration):
+  def _update_history(self, pts_fidel, pts_domain, pts_val, pts_cost, at_opt_fidel):
     """ Adds a query point to the history and discounts the capital etc. """
     pts_fidel = pts_fidel.reshape(-1, self.fidel_dim)
     pts_domain = pts_domain.reshape(-1, self.domain_dim)
@@ -220,7 +221,6 @@ class MFGPBandit(object):
     self.history.curr_opt_vals = np.append(self.history.curr_opt_vals, self.gpb_opt_val)
     self.history.query_at_opt_fidel = np.append(self.history.query_at_opt_fidel,
                                                 at_opt_fidel)
-    self.history.durations = np.append(self.history.durations, duration)
 
   def _get_min_distance_to_opt_fidel(self):
     """ Computes the minimum distance to the optimal fidelity. """
@@ -290,7 +290,7 @@ class MFGPBandit(object):
     num_init_pts = len(fidel_init_pts)
     domain_init_pts = latin_hc_sampling(self.domain_dim, num_init_pts)
     for i in range(num_init_pts):
-      self.query(fidel_init_pts[i], domain_init_pts[i], time.time())
+      self.query(fidel_init_pts[i], domain_init_pts[i])
       if self.spent_capital >= gpb_init_capital:
         break
     self.reporter.writeln('Initialised %s with %d queries, %d at opt_fidel.'%(
@@ -452,15 +452,15 @@ class MFGPBandit(object):
     return pt_cost
 
   # The actual querying happens here
-  def query(self, fidel_pt, domain_pt, start_time):
+  def query(self, fidel_pt, domain_pt):
     """ The querying happens here. It also calls functions to update history and the
         maximum value/ points. But it does *not* update the GP. """
     val_pt = self.mfof.eval_single(fidel_pt, domain_pt)
     # get the current delay time
-    current_delay = self.delays[self.delay_time]
-    print("query delay:", current_delay)
+    current_delay = self.delays[self.delay_num]
+    # print("query delay:", current_delay)
     time.sleep(current_delay)
-    self.delay_time += 1
+    self.delay_num += 1
     ###
     cost_pt = self._update_capital(fidel_pt)
     # Update the optimum point
@@ -470,8 +470,7 @@ class MFGPBandit(object):
       self.gpb_opt_pt = domain_pt
     # Add to history
     at_opt_fidel = is_an_opt_fidel_query(fidel_pt, self.mfof.opt_fidel)
-    duration = (time.time() - start_time)
-    self._update_history(fidel_pt, domain_pt, val_pt, cost_pt, at_opt_fidel, duration)
+    self._update_history(fidel_pt, domain_pt, val_pt, cost_pt, at_opt_fidel)
     if at_opt_fidel:
       self.num_opt_fidel_queries += 1
     return val_pt, cost_pt
@@ -510,10 +509,8 @@ class MFGPBandit(object):
     self.optimise_initialise()
 
     # Main loop --------------------------
-    current_time = time.time()
-    total_time = 600
-    # while not self._terminate_now():
-    while (current_time - start_time) < total_time:
+    # while (current_time - start_time) < max_capital:
+    while not self._terminate_now():
       self.time_step += 1 # increment time
       if self.time_step % self.options.build_new_gp_every == 0: # Build GP if needed
         self._build_new_gp()
@@ -527,18 +524,16 @@ class MFGPBandit(object):
       next_fidel = self._determine_next_fidel(next_pt, acq_params)
       next_fidel, next_pt = self._process_next_fidel_and_pt(next_fidel, next_pt)
       self._track_time_step('next fidel')
-      next_val, _ = self.query(next_fidel, next_pt, start_time=start_time)
+      next_val, _ = self.query(next_fidel, next_pt)
       self._track_time_step('querying')
       # update the gp
       self._add_data_to_mfgp(next_fidel, next_pt, next_val)
       self._track_time_step('gp-update')
-      # current time
-      current_time = time.time()
-      print("duration:", (current_time - start_time))
-      self._report_current_results()
+      if self.time_step % self.options.report_results_every == 0: # report results
+        self._report_current_results()
 
-      # if self.time_step % self.options.report_results_every == 0: # report results
-      #   self._report_current_results()
+    current_time = time.time()
+    print("total time:", (current_time - start_time))
     return self.gpb_opt_pt, self.gpb_opt_val, self.history
 
 # MFGPBandit Class ends here ========================================================

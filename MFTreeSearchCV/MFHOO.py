@@ -405,6 +405,8 @@ class MFHOO(object):
         self.hoo_config = hoo_config
         self.policy = hoo_config["policy"]
         self.delay_type = hoo_config["delay_type"]
+        print("rho", self.rho)
+        print("nu", self.nu)
         if Auto:
             z1 = 0.8
             z2 = 0.2
@@ -453,11 +455,12 @@ class MFHOO(object):
         # get the diam of the current cell
         # nu and rho are for smoothness
         diam = nu * (rho ** height)
-        if option == 1:
-            # z is the
-            z = min(max(1 - diam / self.C, self.tol), 1.0)
-        else:
-            z = 1.0
+        # if option == 1:
+        #     # z is the ferdelity
+        #     z = min(max(1 - diam / self.C, self.tol), 1.0)
+        # else:
+        #     z = 1.0
+        z = 1.0
         if cell in self.value_dict:
             # the selected cell is cached
             current = self.value_dict[cell]
@@ -531,7 +534,6 @@ class MFHOO(object):
             cost = cost + c
 
         return children, cost
-
 
     def take_DHOO_step(self):
 
@@ -625,14 +627,14 @@ class MFHOO(object):
         while (current_time - start_time) <= self.budget:
             if self.delay_type == "HOO":
                 ret = self.take_HOO_step()
-                iter_num += 1
             elif self.delay_type == "DHOO":
                 ret = self.take_DHOO_step()
-                iter_num += 1
             else:
                 raise Exception('unknown method')
             current_time = time.time()
             if ret:
+                iter_num += 1
+                # print("iter_num:", iter_num)
                 # print("current iterations:%d" % iter_num)
                 # print("current HOO number of nodes:%d" % self.Tree.root.total_children())
                 # print("HOO height:%d" % self.Tree.root.max_height())
@@ -666,7 +668,7 @@ class MFHOO(object):
                 true_value = point_value_dict[point_str_hash]
                 true_values.append(true_value)
             else:
-                true_value = self.mfobject.eval_single_noiseless(point)
+                true_value = self.mfobject.eval_single_opt_fidel_noiseless(point)
                 true_values.append(true_value)
                 point_value_dict[point_str_hash] = true_value
         print("values:", true_values)
@@ -741,7 +743,8 @@ class MFPOO(object):
             t3 = time.time()
             v2 = self.mfobject.eval_at_fidel_single_point_normalised([z2], x)
             t2 = time.time()
-            self.C = np.sqrt(2) * np.abs(v1 - v2) / np.abs(z1 - z2)
+            if self.C is None:
+                self.C = np.sqrt(2) * np.abs(v1 - v2) / np.abs(z1 - z2)
             self.nu_max = nu_mult * self.C
             if unit_cost is None:
                 unit_cost = t3 - t1
@@ -776,7 +779,8 @@ class MFPOO(object):
             # run HOO with different rho and nu.
             rho = self.rho_max ** (float(self.nHOO) / (self.nHOO - i))
             MH = MFHOO(mfobject=self.mfobject, nu=nu, rho=rho, budget=self.budget, sigma=self.sigma, C=self.C,
-                       hoo_config=self.hoo_config, tol=1e-3, Randomize=False, Auto=False, value_dict=self.value_dict, debug=self.debug)
+                       hoo_config=self.hoo_config, tol=1e-3, Randomize=False, Auto=False, value_dict=self.value_dict,
+                       debug=self.debug)
             print('Running SOO number: ' + str(i + 1) + ' rho: ' + str(rho) + ' nu: ' + str(nu))
             opt_val = max(opt_val, MH.run())
             print('Done!')

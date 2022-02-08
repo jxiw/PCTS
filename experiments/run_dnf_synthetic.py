@@ -6,6 +6,7 @@ from mf.mf_sum_delay_func import MFSumDelayFunction
 
 NUM_EXP = 1
 
+
 # mfobject is the function to optimize
 # nu is the initial nu in HOO
 # rho is the initial rho in HOO
@@ -32,6 +33,10 @@ if __name__ == '__main__':
     max_hoo = sys.argv[4]
     noisy_factor = 1
 
+    nu = 1.0
+    rho = 0.95
+    C = None
+
     if test_function == 'Hartmann3':
         mfof = synthetic_functions.get_mf_hartmann_as_mfof(1, 3)
         noise_var = noisy_factor * 0.01
@@ -52,6 +57,28 @@ if __name__ == '__main__':
         mfof = synthetic_functions.get_mf_borehole_as_mfof()
         noise_var = noisy_factor * 5
         sigma = np.sqrt(noise_var)
+    elif test_function == "DixonPrice":
+        mfof = synthetic_functions.get_mf_dixon_price_as_mfof(10)
+        noise_var = noisy_factor * 50
+        sigma = np.sqrt(noise_var)
+        C = 10
+    elif test_function == "Rastrigin":
+        mfof = synthetic_functions.get_mf_rastrigin_as_mfof(10)
+        noise_var = noisy_factor * 0.1
+        sigma = np.sqrt(noise_var)
+        C = 10
+    elif test_function == "Levy":
+        mfof = synthetic_functions.get_mf_leyv_as_mfof(10)
+        noise_var = noisy_factor * 0.1
+        sigma = np.sqrt(noise_var)
+        C = 1
+        max_hoo = 1
+    elif test_function == "Schwefel":
+        mfof = synthetic_functions.get_mf_schwefel_as_mfof(20)
+        noise_var = noisy_factor * 0.1
+        sigma = np.sqrt(noise_var)
+        C = 1
+        max_hoo = 1
 
     times = [600]
     mfobject = get_noisy_mfof_from_mfof(mfof, noise_var)
@@ -64,9 +91,6 @@ if __name__ == '__main__':
         hoo_config["ucbv_bound"] = float(sys.argv[5])
         hoo_config["ucbv_const"] = float(sys.argv[6])
 
-    nu = 1.0
-    rho = 0.95
-    C = 0.1
     t0 = mfobject.opt_fidel_cost
     print("test function", test_function)
     print("opt_fidel_cost:", t0)
