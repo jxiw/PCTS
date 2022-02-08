@@ -215,6 +215,113 @@ def get_mf_borehole_as_mfof():
                        opt_val=opt_val)
 # Borehole Function ends here ------------------------------------------------------------
 
+# Wrapped-sine function -------------------------------
+def wrapped_sine_function(x):
+  """ Wrapped-sine function. """
+  f = 0.5 * (np.sin(np.pi * np.log2(2 * np.abs(x - 0.5))) + 1) * ((2 * np.abs(x - 0.5)) ** (- np.log(0.8)) - (2 * np.abs(x - 0.5)) ** (- np.log(0.3))) - (2 * np.abs(x - 0.5)) ** (- np.log(0.8))
+  return f
+
+# Wrapped-sine function end here -------------------------------
+
+# Garland function -------------------------------
+def garland_function(x):
+  f = 4*x*(1-x)(0.75 + 0.25 * (1 - np.sqrt(np.abs(np.sin(60 * x)))))
+  return f
+# Garland function end here -------------------------------
+
+# dixon price function -------------------------------
+def dixon_price(x, d):
+  print("x:", x)
+  f = (x[0] - 1) ** 2
+  for i in range(2, d + 1):
+    f += i * (2 * x[i - 1] ** 2 - x[i - 2]) ** 2
+  print("f:", -f)
+  return -f
+# dixon price function end here -------------------------------
+
+def get_mf_dixon_price_as_mfof(domain_dim):
+  mf_dixon_price_function = lambda z, x: dixon_price(x, domain_dim)
+  fidel_cost_function = lambda z: 1
+  fidel_bounds = [[0, 1]]
+  domain_bounds = []
+  opt_fidel = np.array([1])
+  opt_pt = []
+  for i in range(0, domain_dim):
+    domain_bounds.append([-10, 10])
+  for i in range(0, domain_dim):
+    opt_pt.append(2**((2**i - 2 ) / (- 2**i)))
+  return MFOptFunction(mf_dixon_price_function, fidel_cost_function, fidel_bounds,
+                       np.array(domain_bounds), opt_fidel, vectorised=False, opt_pt=np.array(opt_pt),
+                       opt_val=0)
+
+def rastrigin_function(x, d):
+  f = 10 *d
+  for i in range(0, d):
+    f += x[i]**2 - 10 * np.cos(2 * np.pi * x[i])
+  print("x", x)
+  print("f", f)
+  return -f
+
+def get_mf_rastrigin_as_mfof(domain_dim):
+  mf_rastrigin_function = lambda z, x: rastrigin_function(x, domain_dim)
+  fidel_cost_function = lambda z: 1
+  fidel_bounds = [[0, 1]]
+  domain_bounds = []
+  opt_fidel = np.array([1])
+  opt_pt = np.zeros(domain_dim)
+  for i in range(0, domain_dim):
+    domain_bounds.append([-5.12, 5.12])
+  return MFOptFunction(mf_rastrigin_function, fidel_cost_function, fidel_bounds,
+                       np.array(domain_bounds), opt_fidel, vectorised=False, opt_pt=opt_pt,
+                       opt_val=0)
+
+def schwefel_function(x, d):
+  f = 0
+  for i in range(0, d):
+    f += x[i] * np.sin(np.sqrt(np.abs(x[i])))
+  f = - 418.9829 * d + f
+  # print("x", x)
+  # print("f", f)
+  return f
+
+def get_mf_schwefel_as_mfof(domain_dim):
+  mf_schwefel_function = lambda z, x: schwefel_function(x, domain_dim)
+  fidel_cost_function = lambda z: 1
+  fidel_bounds = [[0, 1]]
+  domain_bounds = []
+  opt_fidel = np.array([1])
+  opt_pt = np.ones(domain_dim)
+  for i in range(0, domain_dim):
+    domain_bounds.append([0, 500])
+  return MFOptFunction(mf_schwefel_function, fidel_cost_function, fidel_bounds,
+                       np.array(domain_bounds), opt_fidel, vectorised=False, opt_pt=opt_pt,
+                       opt_val=0)
+
+
+def leyv_function(x, d):
+  w = np.zeros(d)
+  for i in range(d):
+    w[i] = 1 + (x[i] - 1) / 4
+  f = np.sin(np.pi * w[0]) ** 2 + (w[d - 1] - 1)**2 * (1 + np.sin(2 * np.pi * w[d -1] ** 2))
+  for i in range(0, d):
+    f += (w[i] - 1)**2 * (1 + 10 * np.sin(np.pi * w[i] + 1)**2)
+  # print(x)
+  # print("f", -f)
+  return -f
+
+def get_mf_leyv_as_mfof(domain_dim):
+  mf_leyv_function = lambda z, x: leyv_function(x, domain_dim)
+  fidel_cost_function = lambda z: 1
+  fidel_bounds = [[0, 1]]
+  domain_bounds = []
+  opt_fidel = np.array([1])
+  opt_pt = np.ones(domain_dim)
+  for i in range(0, domain_dim):
+    domain_bounds.append([-10, 10])
+  return MFOptFunction(mf_leyv_function, fidel_cost_function, fidel_bounds,
+                       np.array(domain_bounds), opt_fidel, vectorised=False, opt_pt=opt_pt,
+                       opt_val=0)
+
 
 def _get_mf_cost_function(fidel_bounds, is_0_1):
   """ Returns the cost function. fidel_bounds are the bounds for the fidelity space
@@ -238,3 +345,5 @@ def _get_mf_cost_function(fidel_bounds, is_0_1):
            lambda z: _norm_cost_function(map_to_cube(z, fidel_bounds)))
   return ret
 
+
+# UCB1 Schwefel DHOO 1
