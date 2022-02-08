@@ -1,8 +1,8 @@
 #!/bin/bash
 export PYTHONPATH=$PYTHONPATH:/Users/junxiong/Documents/HOO/MFTreeSearchCV-master/
 
-start=5
-round=8
+start=1
+round=10
 
 mkdir "DHOO"
 mkdir "DHOO/Hartmann3/"
