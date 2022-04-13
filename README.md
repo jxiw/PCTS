@@ -1,4 +1,4 @@
-# PCTS
+# Procrastinated Tree Search: Black-box Optimization with Delayed, Noisy, and Multi-fidelity Feedback(PCTS)
 PCTS is a package for black-box optimization and fast hyper-parameter tuning with Delayed, Noisy, and Multi-fidelity Feedback.
 
 This repo is based on https://github.com/rajatsen91/MFTreeSearchCV.
@@ -7,7 +7,9 @@ This repo is based on https://github.com/rajatsen91/MFTreeSearchCV.
 
 Make sure your python version is python 2.7
 
+```
 ./experiments/run_pcts.sh
+```
 
 # Cite
 
